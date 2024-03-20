@@ -1,27 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IndexedDB Storage</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>DataBase in build</h1>
-    <textarea id="textInput" placeholder="Enter text..."></textarea>
-    <select id="sectionSelect">
-        <option value="section1">File 1</option>
-        <option value="section2">File 2</option>
-        <option value="section3">File 3</option>
-        <!-- Add more options for other sections if needed -->
-    </select> 
-    <button id="saveBtn">Save</button>
-    <div id="savedData"></div>
-    <div class="made-with-love">
-        Made with <i id="heart">💖</i>&amp;<i id="coffee">☕</i> by
-        <a href="https://ramjeemishra.github.io/Ramjee_Mishra/">Developer Ram</a>
-      </div>
+    <title>❤️🫣🫣❤️</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
 
-    <script src="script.js"></script>
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            background-color: #ffffff5a;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: 3px solid white;
+            border-radius: 3px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            margin-top: 10px;
+            color: red;
+        }
+
+        #passwordStrength {
+            border-radius: 4px;
+            color: rgb(0, 0, 0);
+            padding: 5px 5px 5px 5px;
+            font-size: larger;
+            font-weight: 400;
+            font-display: initial;
+            margin-bottom: 2%;
+            width: fit-content;
+            background-color: rgb(255, 255, 255);
+            box-shadow: #ffffff5a;
+        }
+
+        .container,
+        button,
+        input[type="password"] {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.793);
+        }
+        .container a{
+            text-decoration: none;
+            color: #000000;
+            font-size: larger;
+            font-weight: 500;
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="passwordSetup">
+        <h2>❤️ Create Password ❤️</h2>
+        <form id="passwordForm">
+            <label for="password">Enter Password:</label>
+            <input type="password" id="password" required>
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" required>
+            <div id="passwordStrength"></div>
+            <button type="submit">Create Password</button>
+            <button id="checkStrengthBtn" type="button" onclick="checkPasswordStrength()">Check Password
+                Strength</button>
+            <div class="error" id="error"></div>
+        </form>
+    </div>
+    <div class="container" id="passwordPrompt" style="display: none;">
+        <h2>Enter Password</h2>
+        <form id="loginForm">
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+            <button type="submit">Enter</button>
+            <div class="error" id="loginError"></div>
+        </form>
+    </div>
+    <div class="container" id="loadingContainer" style="display: none;">
+        <!-- Loading GIF -->
+        <img src="output-onlinegiftools (1).gif" style="margin-left:35%;" alt="Loading..." width="100">
+    </div>
+    <div class="container" id="contentContainer" style="display: none; color: #000000;">
+        <a href="DB/index.html">Click me</a>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+
+        function checkPasswordStrength() {
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+            var strength = getPasswordStrength(password);
+
+            var passwordStrengthElement = document.getElementById('passwordStrength');
+            if (password !== confirmPassword) {
+                passwordStrengthElement.textContent = '🤔 Passwords do not match 🤔';
+            } else {
+                passwordStrengthElement.textContent = strength;
+            }
+        }
+
+        function getPasswordStrength(password) {
+            // Placeholder logic to determine password strength
+            if (password.length < 6) {
+                return '🥶 ' + 'Weak' + ' 🥶';
+            } else if (password.length < 10) {
+                return '🥰 ' + 'Medium' + ' 🥰';
+            } else {
+                return '🫡 ' + 'Strong' + ' 🫡';
+            }
+        }
+
+
+
+
+
+        // Check if a password is already stored
+        var storedPassword = localStorage.getItem('password');
+        if (storedPassword) {
+            // Password is already set up, show the login prompt
+            document.getElementById('passwordSetup').style.display = 'none';
+            document.getElementById('passwordPrompt').style.display = 'block';
+        }
+
+        document.getElementById('passwordForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+
+            var errorElement = document.getElementById('error');
+
+            if (password !== confirmPassword) {
+                errorElement.textContent = 'Passwords do not match';
+                return;
+            }
+
+            // Passwords match, store it in localStorage
+            localStorage.setItem('password', password);
+
+            // Hide the password setup form and show the login prompt
+            document.getElementById('passwordSetup').style.display = 'none';
+            document.getElementById('passwordPrompt').style.display = 'block';
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    var loginPassword = document.getElementById('loginPassword').value;
+    var storedPassword = localStorage.getItem('password');
+
+    var loginErrorElement = document.getElementById('loginError');
+
+    if (!storedPassword || loginPassword !== storedPassword) {
+        loginErrorElement.textContent = 'Invalid password';
+        return;
+    }
+
+    // Clear the login form and error message
+    document.getElementById('loginPassword').value = '';
+    loginErrorElement.textContent = '';
+
+    // Hide the login form
+    document.getElementById('passwordPrompt').style.display = 'none';
+
+    // Show the content container
+    document.getElementById('contentContainer').style.display = 'block';
+});
+
+
+
+
+
+        document.addEventListener('keydown', function (event) {
+            var randomR = Math.floor(Math.random() * 256);
+            var randomG = Math.floor(Math.random() * 256);
+            var randomB = Math.floor(Math.random() * 256);
+            var randomColor1 = 'rgb(' + randomR + ',' + randomG + ',' + randomB + ')';
+            randomR = Math.floor(Math.random() * 256);
+            randomG = Math.floor(Math.random() * 256);
+            randomB = Math.floor(Math.random() * 256);
+            var randomColor2 = 'rgb(' + randomR + ',' + randomG + ',' + randomB + ')';
+
+            if (event.key.match(/[a-z]/)) {
+                document.body.style.backgroundImage = 'none'; // Clear linear gradient background
+                document.body.style.backgroundColor = randomColor1;
+            } else if (event.key.match(/[`~!@#$%^&*()-_=+\[\]{};:'"|,<.>/?]/)) {
+                document.body.style.backgroundImage = 'linear-gradient(to right, ' + randomColor1 + ', ' + randomColor2 + ')';
+            }
+        });
+
+    </script>
 </body>
+
 </html>
